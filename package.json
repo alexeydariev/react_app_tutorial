@@ -27,6 +27,8 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
-    "pg": "^7.9.0"
+    "pg": "^7.9.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
   }
 }
