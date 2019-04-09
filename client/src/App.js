@@ -5,6 +5,7 @@ import {
   Navbar,
   NavbarBrand,
   Row,
+  FormGroup,
   Jumbotron,
   InputGroup,
   InputGroupAddon,
@@ -27,7 +28,7 @@ class App extends Component {
   }
 
 getCityList = () => {
-  fetch('/api/cities')
+  fetch('/api/cities/')
   .then(res => res.json())
   .then(res =>{
     var cityList = res.map(r => r.city_name);
@@ -37,6 +38,31 @@ getCityList = () => {
 
 handleInputChange = (e) => {
   this.setState({newCityName: e.target.value});
+}
+
+handleAddCity = () => {
+  fetch('/api/cities/', {
+    method: 'post',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ city: this.state.newCityName})
+  })
+  .then(res => res.json())
+  .then(res =>{
+    this.getCityList();
+    this.setState({ newCityName: ''});
+  });
+}
+
+  getWeather = (city) => {
+    fetch(`/api/weather/${city}`)
+    .then(res => res.json())
+    .then(weather => {
+      console.log(weather);
+      this.setState({ weather });
+    });
+}
+handleChangeCity = (e) => {
+  this.getWeather(e.target.value)
 }
 
 componentDidMount () {
@@ -68,9 +94,18 @@ componentDidMount () {
           </Col>
       </Row>
       <Row>
-          <Col></Col>
+          <Col>
+          <h1 className = 'display-5'> current weather</h1>
+          <FormGroup> 
+              <Input type="select" onChange = {this.handleChangeCity}>
+                { this.state.cityList.length === 0 && <option> no cities aded.</option> }
+                { this.state.cityList.length >0 && <option>select a city</option>}
+                { this.state.cityList.map((city, i) => <option key = {i}>{city} </option>)}
+              </Input>
+          </FormGroup>
+          </Col>
       </Row>
-      <Weather />
+      <Weather data= {this.state.weather}/>
       </Container>
     );
   }
